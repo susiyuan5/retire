@@ -2,6 +2,12 @@
 
 Canada retirement planning MVP for people considering retirement in Canada or China.
 
+## Online calculator
+
+After GitHub Pages is enabled for the `main` branch `/docs` folder, open:
+
+https://susiyuan5.github.io/retire/
+
 ## Run
 
 Standard React + TypeScript development:
@@ -25,6 +31,7 @@ Then open `http://localhost:4173`.
 - `src/engine/calculator.ts`: CPP, OAS, GIS, RRIF, TFSA, tax, and projection logic
 - `src/App.tsx`: React dashboard, input forms, result page, comparison, and charts
 - `preview/`: zero-install interactive preview
+- `docs/`: GitHub Pages website
 
 ## Important
 
