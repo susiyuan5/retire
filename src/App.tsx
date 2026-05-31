@@ -49,6 +49,8 @@ function App() {
           <Field label="CPP 缴费年数" value={inputs.cppContributionYears} onChange={(v) => update("cppContributionYears", v)} />
         </div>
         <h3>退休设置</h3><div className="fields">
+          <label><span>省份</span><select value={inputs.province} onChange={(e) => update("province", e.target.value)}><option>Ontario</option><option>British Columbia</option><option>Alberta</option><option>Quebec</option><option>Other</option></select></label>
+          <label><span>婚姻状态</span><select value={inputs.maritalStatus} onChange={(e) => update("maritalStatus", e.target.value as PlannerInputs["maritalStatus"])}><option>Single</option><option>Couple</option></select></label>
           <label><span>退休国家</span><select value={inputs.retirementCountry} onChange={(e) => update("retirementCountry", e.target.value as RetirementCountry)}><option>Canada</option><option>China</option><option>Other</option></select></label>
           <label><span>税务身份</span><select value={inputs.residentStatus} onChange={(e) => update("residentStatus", e.target.value as ResidentStatus)}><option>Canadian Resident</option><option>Canadian Non-Resident</option></select></label>
           <Field label="CPP 开始年龄" value={inputs.cppStartAge} onChange={(v) => update("cppStartAge", v)} />
@@ -62,6 +64,7 @@ function App() {
           <Field label="每月新增投资" value={inputs.monthlyInvestment} onChange={(v) => update("monthlyInvestment", v)} />
           <Field label="退休前回报率" value={inputs.expectedAnnualReturn} step=".001" onChange={(v) => update("expectedAnnualReturn", v)} />
           <Field label="退休后回报率" value={inputs.retirementReturn} step=".001" onChange={(v) => update("retirementReturn", v)} />
+          <Field label="通胀率" value={inputs.inflationRate} step=".001" onChange={(v) => update("inflationRate", v)} />
         </div>
         <h3>每月支出</h3><div className="fields">
           {(Object.keys(inputs.expenses) as (keyof ExpenseInputs)[]).map((key) => <Field key={key} label={key} value={inputs.expenses[key]} onChange={(v) => updateExpense(key, v)} />)}
@@ -113,7 +116,7 @@ function Assumptions({ assumptions: a, setAssumptions, inputs, update }: { assum
   return <section className="results"><div className="panel hero"><div><p className="eyebrow">EDITABLE POLICY CONFIG</p><h2>政策与规划参数</h2><p>这些是示例默认值，请在正式使用前按适用年份核实。</p></div></div><div className="assumption-grid">
     <section className="panel"><h2>CPP</h2><Field label="65岁最高月金额" value={a.cpp.maxMonthlyAt65} onChange={(v) => patch("cpp", "maxMonthlyAt65", v)} /><Field label="YMPE" value={a.cpp.ympe} onChange={(v) => patch("cpp", "ympe", v)} /><Field label="标准缴费年数" value={a.cpp.standardContributionYears} onChange={(v) => patch("cpp", "standardContributionYears", v)} /><Field label="提前每月扣减" value={a.cpp.earlyReductionPerMonth} step=".001" onChange={(v) => patch("cpp", "earlyReductionPerMonth", v)} /></section>
     <section className="panel"><h2>OAS / GIS</h2><Field label="OAS 最高月金额" value={a.oas.maxMonthly} onChange={(v) => patch("oas", "maxMonthly", v)} /><Field label="居民最低年数" value={a.oas.residentMinimumYears} onChange={(v) => patch("oas", "residentMinimumYears", v)} /><Field label="海外最低年数" value={a.oas.overseasMinimumYears} onChange={(v) => patch("oas", "overseasMinimumYears", v)} /><Field label="GIS 最高月金额" value={a.gis.maxMonthly} onChange={(v) => patch("gis", "maxMonthly", v)} /></section>
-    <section className="panel"><h2>税务与汇率</h2><Field label="居民估算有效税率" value={a.tax.residentEffectiveRate} step=".01" onChange={(v) => patch("tax", "residentEffectiveRate", v)} /><Field label="默认非居民预扣率" value={inputs.defaultWithholdingRate} step=".01" onChange={(v) => update("defaultWithholdingRate", v)} /><Field label="条约预扣率" value={inputs.treatyWithholdingRate} step=".01" onChange={(v) => update("treatyWithholdingRate", v)} /><Field label="CAD / CNY 汇率" value={inputs.cadToCnyExchangeRate} step=".01" onChange={(v) => update("cadToCnyExchangeRate", v)} /></section>
+    <section className="panel"><h2>税务与汇率</h2><Field label="居民估算有效税率" value={a.tax.residentEffectiveRate} step=".01" onChange={(v) => patch("tax", "residentEffectiveRate", v)} /><Field label="默认非居民预扣率" value={inputs.defaultWithholdingRate} step=".01" onChange={(v) => update("defaultWithholdingRate", v)} /><Field label="条约预扣率" value={inputs.treatyWithholdingRate} step=".01" onChange={(v) => update("treatyWithholdingRate", v)} /><Field label="CAD / CNY 汇率" value={inputs.cadToCnyExchangeRate} step=".01" onChange={(v) => update("cadToCnyExchangeRate", v)} /><label className="check"><input type="checkbox" checked={inputs.enableSection217Simulation} onChange={(e) => update("enableSection217Simulation", e.target.checked)} /><span>启用 Section 217 估算</span></label></section>
     <section className="panel"><h2>RRIF</h2><Field label="转换年龄" value={a.rrif.conversionAge} onChange={(v) => patch("rrif", "conversionAge", v)} /><Field label="默认提款率" value={a.rrif.defaultWithdrawalRate} step=".001" onChange={(v) => patch("rrif", "defaultWithdrawalRate", v)} /><p>按年龄提款表保存在 <code>src/config/assumptions.ts</code>，可继续扩展为界面编辑器。</p></section>
   </div></section>;
 }

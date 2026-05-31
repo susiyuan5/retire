@@ -7,6 +7,13 @@ const futureValue = (principal: number, monthly: number, years: number, annualRa
   return principal * Math.pow(1 + rate, months) + (rate ? monthly * (Math.pow(1 + rate, months) - 1) / rate : monthly * months);
 };
 
+const rrifWithdrawalRate = (age: number, a: PolicyAssumptions) => {
+  if (age < a.rrif.conversionAge) return a.rrif.defaultWithdrawalRate;
+  const ages = Object.keys(a.rrif.withdrawalRatesByAge).map(Number).sort((left, right) => left - right);
+  const applicableAge = ages.filter((tableAge) => tableAge <= age).pop();
+  return applicableAge ? a.rrif.withdrawalRatesByAge[applicableAge] : a.rrif.defaultWithdrawalRate;
+};
+
 const taxRate = (inputs: PlannerInputs, assumptions: PolicyAssumptions, taxable: boolean) => {
   if (!taxable) return 0;
   if (inputs.residentStatus === "Canadian Resident") return assumptions.tax.residentEffectiveRate;
@@ -30,7 +37,7 @@ const autoMonthly = (id: string, inputs: PlannerInputs, a: PolicyAssumptions, as
     const threshold = inputs.maritalStatus === "Single" ? a.gis.singleIncomeThreshold : a.gis.coupleIncomeThreshold;
     return clamp(a.gis.maxMonthly - Math.max(0, taxableAnnualBeforeGis) * a.gis.reductionRate / 12, 0, threshold / 12);
   }
-  if (id === "rrif") return inputs.rrspBalance * a.rrif.defaultWithdrawalRate / 12;
+  if (id === "rrif") return inputs.rrspBalance * rrifWithdrawalRate(inputs.retirementAge, a) / 12;
   if (id === "tfsa") return inputs.tfsaBalance * inputs.retirementReturn / 12;
   if (id === "nonRegistered") return inputs.nonRegisteredBalance * inputs.retirementReturn / 12;
   return 0;
